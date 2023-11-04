@@ -17,7 +17,7 @@ def calc_binned_avg(feature, target, bins):
     df_binned['binned'] = pd.cut(df_binned[feature], bins=bins, include_lowest=True)
     return df_binned.groupby('binned')[target].mean().reset_index()
 
-df=pd.read_pickle('apps\merged_tokyo_turf.pickle')
+df=pd.read_pickle('apps/merged_tokyo_turf.pickle')
 setting_length = st.selectbox(
     'コースの長さを選択してください:',
     options=df['course_len'].unique(), # course_lenのユニークな値を選択肢として提供
