@@ -11,13 +11,24 @@ import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 
 sns.set()
-st.title('東京競馬2013～2023')
+# タイトル設定
+st.title('競馬データ分析')
+
+# タブのように機能するラジオボタンを作成
+tab = st.radio("競馬場を選択してください:", ('東京', '京都'))
+
+# 選択された競馬場に応じてデータをロード
+if tab == '東京':
+    df = pd.read_pickle('apps/merged_tokyo_turf.pickle')
+    
+elif tab == '京都':
+    df = pd.read_pickle('apps/merged_kyoto_turf.pickle')
+    
 def calc_binned_avg(feature, target, bins):
     df_binned = df.copy()
     df_binned['binned'] = pd.cut(df_binned[feature], bins=bins, include_lowest=True)
     return df_binned.groupby('binned')[target].mean().reset_index()
 
-df=pd.read_pickle('apps/merged_tokyo_turf.pickle')
 setting_length = st.selectbox(
     'コースの長さを選択してください:',
     options=df['course_len'].unique(), # course_lenのユニークな値を選択肢として提供
@@ -29,7 +40,7 @@ df=df[idx].copy()
 feature = st.selectbox(
     '比較する特徴量を選択してください:',
 #    options=df.columns.drop('rank') # 'rank'を除外したすべての特徴量
-    options=['枠 番','斤量','Weight','Goal difference_5R','Bonus_5R','first_corner_5R','speed_1R']
+    options=['枠 番','斤量','Weight','Goal difference_5R','Bonus_5R','Last3F_5R','speed_1R']
 )
 # ビンの作成
 num_bins = st.number_input('分割数を入力してください', min_value=1, max_value=100, value=10)
