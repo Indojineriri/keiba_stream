@@ -48,25 +48,25 @@ feature = st.selectbox(
     options=['枠番','斤量','馬体重','平均着差','平均賞金額','平均Last3F','前走スピード指数']
 )
 #マップの変換
-feature=feature.map(conversion_dict)
+converted_features = conversion_dict.get(feature, feature)
 
 # ビンの作成
 num_bins = st.number_input('分割数を入力してください', min_value=1, max_value=100, value=10)
 range_min, range_max = st.slider(
     'グラフのレンジを選択してください',
-    min_value=float(df[feature].min()),
-    max_value=float(df[feature].max()),
-    value=(float(df[feature].min()), float(df[feature].max()))
+    min_value=float(df[converted_features].min()),
+    max_value=float(df[converted_features].max()),
+    value=(float(df[converted_features].min()), float(df[converted_features].max()))
 )
 
 # ビンの作成、ここではユーザーが指定した範囲を使用
 bins = np.linspace(start=range_min, stop=range_max, num=num_bins)
 
 # 平均順位の計算
-avg_rank = calc_binned_avg(feature, 'rank', bins)
+avg_rank = calc_binned_avg(converted_features, 'rank', bins)
 
 # プロット作成
-fig_BS = make_subplots(rows=1, cols=1, subplot_titles=[feature])
+fig_BS = make_subplots(rows=1, cols=1, subplot_titles=[converted_features])
 
 # 棒グラフの追加
 fig_BS.add_trace(go.Bar(x=avg_rank['binned'].astype(str), y=avg_rank['rank']), row=1, col=1)
