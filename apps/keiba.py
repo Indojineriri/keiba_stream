@@ -28,6 +28,11 @@ def calc_binned_avg(feature, target, bins):
     df_binned = df.copy()
     df_binned['binned'] = pd.cut(df_binned[feature], bins=bins, include_lowest=True)
     return df_binned.groupby('binned')[target].mean().reset_index()
+#
+conversion_dict = {
+        '枠番':'枠 番',  '斤量':'斤量',  '馬体重':'Weight',  '平均着差':'Goal difference_5R',  '平均賞金額':'Bonus_5R',
+        '平均Last3F':'Last3F_5R',  '前走スピード指数':'speed_1R'
+        }
 
 setting_length = st.selectbox(
     'コースの長さを選択してください:',
@@ -40,8 +45,11 @@ df=df[idx].copy()
 feature = st.selectbox(
     '比較する特徴量を選択してください:',
 #    options=df.columns.drop('rank') # 'rank'を除外したすべての特徴量
-    options=['枠 番','斤量','Weight','Goal difference_5R','Bonus_5R','Last3F_5R','speed_1R']
+    options=['枠番','斤量','馬体重','平均着差','平均賞金額','平均Last3F','前走スピード指数']
 )
+#マップの変換
+feature=feature.map(conversion_dict)
+
 # ビンの作成
 num_bins = st.number_input('分割数を入力してください', min_value=1, max_value=100, value=10)
 range_min, range_max = st.slider(
