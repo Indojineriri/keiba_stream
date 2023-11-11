@@ -72,7 +72,10 @@ fig_BS = make_subplots(rows=1, cols=1, subplot_titles=[converted_features])
 fig_BS.add_trace(go.Bar(x=avg_rank['binned'].astype(str), y=avg_rank['rank']), row=1, col=1)
 
 # レイアウト調整
-fig_BS.update_layout(barmode='group')
+fig_BS.update_layout(
+    yaxis_title='複勝率',
+    barmode='group'
+)
 
 # Streamlitにグラフを表示
 st.plotly_chart(fig_BS)
