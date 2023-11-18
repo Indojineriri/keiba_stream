@@ -102,8 +102,10 @@ elif page=='データ可視化':
     )
     idx=df.index==race_id
     df_use=df[idx].copy()
-    feature1 = st.selectbox('第1の特徴量を選択してください:', selection)
-    feature2 = st.selectbox('第2の特徴量を選択してください:', selection)
+    default_feature1 = selection.index('平均位置取り') if '平均位置取り' in selection else 0
+    default_feature2 = selection.index('平均Last3F') if '平均Last3F' in selection else 0
+    feature1 = st.selectbox('第1の特徴量を選択してください:', selection,index=default_feature1)
+    feature2 = st.selectbox('第2の特徴量を選択してください:', selection,index=default_feature2)
     
     converted_features1=conversion_dict.get(feature1, feature1)
     converted_features2=conversion_dict.get(feature2, feature2)
