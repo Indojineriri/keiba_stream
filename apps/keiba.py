@@ -110,7 +110,7 @@ elif page=='データ可視化':
     # 散布図の作成
     sns.set_style("whitegrid")
     plt.figure(figsize=(10, 6))
-    plt.scatter(df_use[converted_features1], df_use[converted_features2], s=50, c='red', marker='o')
+    sns.scatterplot(data=df_use, x=converted_features1, y=converted_features2)
     plt.title(f"scatter: {converted_features1} vs {converted_features2}")
     # 馬名の追加
     for i in range(df_use.shape[0]):
