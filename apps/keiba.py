@@ -106,11 +106,13 @@ elif page=='データ可視化':
     st.title('京都9-11レース')
     tab = st.radio("競馬場を選択してください:", ('東京', '京都'))
     if tab == '東京':
-        df_learn  = pd.read_pickle('apps/merged_tokyo_turf.pickle')
-        df=pd.read_pickle('apps/calin.pickle')
+        df_learn_t  = pd.read_pickle('apps/merged_tokyo_turf.pickle')
+        df_learn_d=pd.read_pickle('apps/merged_tokyo_durt.pickle')
+        df=pd.read_pickle('apps/calin_tokyo.pickle')
     elif tab == '京都':
-        df_learn= pd.read_pickle('apps/merged_kyoto_turf.pickle')
-        df=pd.read_pickle('apps/calin.pickle')
+        df_learn_t= pd.read_pickle('apps/merged_kyoto_turf.pickle')
+        df_learn_d=pd.read_pickle('apps/merged_kyoto_durt.pickle')
+        df=pd.read_pickle('apps/calin_kyoto.pickle')
     #レースIDの取得
     race_id_unique=df.index.unique()
     race_id = st.selectbox(
@@ -148,6 +150,16 @@ elif page=='データ可視化':
     ml_features = [conversion_dict.get(feature, feature) for feature in selected_features]
     #コース長さの設定
     course_length=df_use['course_len'].mean()
+    print(df_use)
+    
+    #芝かダートの選択
+    if 'race_type_芝' in df_use.columns:
+        df_learn = df_learn_t
+    else:
+    # 'race_type_芝' が存在しない場合の処理（必要に応じて）
+    # 例: df_learn を別のデフォルト値に設定
+        df_learn = df_learn_d # または別の適当なデフォルト値
+        
     idx=df_learn['course_len']==course_length
     #学習用のXを設定
     X=df_learn[idx]

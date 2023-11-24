@@ -1,11 +1,28 @@
-from langchain.chat_models import ChatOpenAI
-from langchain.schema import (
-    AIMessage,
-    HumanMessage,
-    SystemMessage
+from langchain.document_loaders import PyMuPDFLoader
+from langchain.embeddings import OpenAIEmbeddings  #← OpenAIEmbeddingsをインポート
+from langchain.text_splitter import SpacyTextSplitter
+from langchain.vectorstores import Chroma  #← Chromaをインポート
+
+loader = PyMuPDFLoader("apps/sample.pdf")
+documents = loader.load()
+
+text_splitter = SpacyTextSplitter(
+    chunk_size=300, 
+    pipeline="ja_core_news_sm"
+)
+splitted_documents = text_splitter.split_documents(documents)
+
+embeddings = OpenAIEmbeddings( #← OpenAIEmbeddingsを初期化する
+    model="text-embedding-ada-002" #← モデル名を指定
 )
 
-chat = ChatOpenAI(temperature=0)
-output = chat.predict_messages([HumanMessage(content="日本の総理大臣は誰ですか？")])
+database = Chroma(  #← Chromaを初期化する
+    persist_directory="./.data",  #← 永続化データの保存先を指定
+    embedding_function=embeddings  #← ベクトル化するためのモデルを指定
+)
 
-print(output)
+database.add_documents(  #← ドキュメントをデータベースに追加
+    splitted_documents,  #← 追加するドキュメント
+)
+
+print("データベースの作成が完了しました。") #← 完了を通知する
