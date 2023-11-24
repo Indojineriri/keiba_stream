@@ -103,7 +103,7 @@ if page=='データ分析':
     st.plotly_chart(fig_BS)
     
 elif page=='データ可視化':
-    st.title('京都9-11レース')
+    st.title('東京京都11/24 7-12レース')
     tab = st.radio("競馬場を選択してください:", ('東京', '京都'))
     if tab == '東京':
         df_learn_t  = pd.read_pickle('apps/merged_tokyo_turf.pickle')
