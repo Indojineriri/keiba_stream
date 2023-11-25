@@ -37,7 +37,7 @@ params = {'objective': 'binary',
 'min_child_samples': 20,
 'num_iterations': 1000,}
 
-page=st.sidebar.radio('ページを選択してください',['データ分析','データ可視化'])
+page=st.sidebar.radio('ページを選択してください',['データ分析','データ可視化','京阪杯','ジャパンC'])
 
 if page=='データ分析':
     # タブのように機能するラジオボタンを作成
@@ -166,6 +166,94 @@ elif page=='データ可視化':
     X = X[ml_features]
     #学習用のYを設定
     y=df_learn[idx]
+    y=y['rank']
+    #LGBMでの学習の実施
+    lgb_clf = lgb.LGBMClassifier(**params)
+    lgb_clf.fit(X, y)
+    #学習させるべきデータ
+    probabilities = lgb_clf.predict_proba(df_use[ml_features])[:, 1]
+    pred=df_use[['馬 番','馬名']].copy()
+    pred['複勝確率%']=probabilities*100
+    st.dataframe(pred)
+    
+elif page=='京阪杯':
+    df_learn=pd.read_pickle('apps/merged_keihan.pickle')
+    df_use=pd.read_pickle('apps/calin_keihan.pickle')
+    
+    st.subheader("データ可視化（2軸で傾向見れるよーん）")
+    default_feature1 = selection.index('平均位置取り') if '平均位置取り' in selection else 0
+    default_feature2 = selection.index('平均Last3F') if '平均Last3F' in selection else 0
+    feature1 = st.selectbox('第1の特徴量を選択してください:', selection,index=default_feature1)
+    feature2 = st.selectbox('第2の特徴量を選択してください:', selection,index=default_feature2)
+    converted_features1=conversion_dict.get(feature1, feature1)
+    converted_features2=conversion_dict.get(feature2, feature2)
+    # 散布図の作成
+    sns.set_style("whitegrid")
+    plt.figure(figsize=(10, 6))
+    sns.scatterplot(data=df_use, x=converted_features1, y=converted_features2)
+    plt.title(f"scatter: {converted_features1} vs {converted_features2}")
+    # 馬名の追加
+    for i in range(df_use.shape[0]):
+        plt.text(x=df_use[converted_features1].iloc[i], y=df_use[converted_features2].iloc[i], s=df_use['馬 番'].iloc[i],
+            fontdict=dict(color='red', size=12),
+            bbox=dict(facecolor='yellow', alpha=1))
+
+    st.pyplot(plt)
+    
+    #学習の開始
+    st.subheader("機械学習予想（LightGBMでやってるよーん）")
+    #特徴量の選択
+    selected_features = st.multiselect('特徴量を選択してください:', selection, default=default_selections)
+    ml_features = [conversion_dict.get(feature, feature) for feature in selected_features]
+    #学習用のXを設定
+    X=df_learn
+    X = X[ml_features]
+    #学習用のYを設定
+    y=df_learn
+    y=y['rank']
+    #LGBMでの学習の実施
+    lgb_clf = lgb.LGBMClassifier(**params)
+    lgb_clf.fit(X, y)
+    #学習させるべきデータ
+    probabilities = lgb_clf.predict_proba(df_use[ml_features])[:, 1]
+    pred=df_use[['馬 番','馬名']].copy()
+    pred['複勝確率%']=probabilities*100
+    st.dataframe(pred)
+    
+elif page=='ジャパンC':
+    df_learn=pd.read_pickle('apps/merged_japan.pickle')
+    df_use=pd.read_pickle('apps/calin_japan.pickle')
+    
+    st.subheader("データ可視化（2軸で傾向見れるよーん）")
+    default_feature1 = selection.index('平均位置取り') if '平均位置取り' in selection else 0
+    default_feature2 = selection.index('平均Last3F') if '平均Last3F' in selection else 0
+    feature1 = st.selectbox('第1の特徴量を選択してください:', selection,index=default_feature1)
+    feature2 = st.selectbox('第2の特徴量を選択してください:', selection,index=default_feature2)
+    converted_features1=conversion_dict.get(feature1, feature1)
+    converted_features2=conversion_dict.get(feature2, feature2)
+    # 散布図の作成
+    sns.set_style("whitegrid")
+    plt.figure(figsize=(10, 6))
+    sns.scatterplot(data=df_use, x=converted_features1, y=converted_features2)
+    plt.title(f"scatter: {converted_features1} vs {converted_features2}")
+    # 馬名の追加
+    for i in range(df_use.shape[0]):
+        plt.text(x=df_use[converted_features1].iloc[i], y=df_use[converted_features2].iloc[i], s=df_use['馬 番'].iloc[i],
+            fontdict=dict(color='red', size=12),
+            bbox=dict(facecolor='yellow', alpha=1))
+
+    st.pyplot(plt)
+    
+    #学習の開始
+    st.subheader("機械学習予想（LightGBMでやってるよーん）")
+    #特徴量の選択
+    selected_features = st.multiselect('特徴量を選択してください:', selection, default=default_selections)
+    ml_features = [conversion_dict.get(feature, feature) for feature in selected_features]
+    #学習用のXを設定
+    X=df_learn
+    X = X[ml_features]
+    #学習用のYを設定
+    y=df_learn
     y=y['rank']
     #LGBMでの学習の実施
     lgb_clf = lgb.LGBMClassifier(**params)
