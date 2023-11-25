@@ -160,12 +160,14 @@ elif page=='データ可視化':
     # 例: df_learn を別のデフォルト値に設定
         df_learn = df_learn_d # または別の適当なデフォルト値
         
-    idx=df_learn['course_len']==course_length
+#    idx=df_learn['course_len']==course_length
+ #   st.dataframe(df_use)
     #学習用のXを設定
-    X=df_learn[idx]
+    X=df_learn
     X = X[ml_features]
     #学習用のYを設定
-    y=df_learn[idx]
+    y=df_learn
+#    st.dataframe(df_learn)
     y=y['rank']
     #LGBMでの学習の実施
     lgb_clf = lgb.LGBMClassifier(**params)
