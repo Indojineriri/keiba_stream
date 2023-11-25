@@ -193,12 +193,12 @@ elif page=='京阪杯':
  #   sns.scatterplot(data=df_use, x=converted_features1, y=converted_features2)
  #   plt.title(f"scatter: {converted_features1} vs {converted_features2}")
     # 馬名の追加
-    for i in range(df_use.shape[0]):
-        plt.text(x=df_use[converted_features1].iloc[i], y=df_use[converted_features2].iloc[i], s=df_use['馬 番'].iloc[i],
-            fontdict=dict(color='red', size=12),
-            bbox=dict(facecolor='yellow', alpha=1))
+ #   for i in range(df_use.shape[0]):
+ #       plt.text(x=df_use[converted_features1].iloc[i], y=df_use[converted_features2].iloc[i], s=df_use['馬 番'].iloc[i],
+ #           fontdict=dict(color='red', size=12),
+ #           bbox=dict(facecolor='yellow', alpha=1))
 
-    st.pyplot(plt)
+#    st.pyplot(plt)
     
     #学習の開始
     st.subheader("機械学習予想（LightGBMでやってるよーん）")
