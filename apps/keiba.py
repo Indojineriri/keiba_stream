@@ -165,8 +165,7 @@ elif page=='データ可視化':
     ml_features = [conversion_dict.get(feature, feature) for feature in selected_features]
     #コース長さの設定
     course_length=df_use['course_len'].mean()
-    print(df_use)
-    
+
     #芝かダートの選択
     if 'race_type_芝' in df_use.columns:
         df_learn = df_learn_t
@@ -176,13 +175,13 @@ elif page=='データ可視化':
         df_learn = df_learn_d # または別の適当なデフォルト値
         
 #    idx=df_learn['course_len']==course_length
-    st.dataframe(df_use)
+#    st.dataframe(df_use)
     #学習用のXを設定
     X=df_learn
     X = X[ml_features]
     #学習用のYを設定
     y=df_learn
-    st.dataframe(df_learn)
+#    st.dataframe(df_learn)
     y=y['rank']
     #LGBMでの学習の実施
     lgb_clf = lgb.LGBMClassifier(**params)
