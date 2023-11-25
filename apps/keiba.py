@@ -108,20 +108,34 @@ elif page=='データ可視化':
     if tab == '東京':
         df_learn_t  = pd.read_pickle('apps/merged_tokyo_turf.pickle')
         df_learn_d=pd.read_pickle('apps/merged_tokyo_durt.pickle')
-        df=pd.read_pickle('apps/calin_tokyo.pickle')
+        df_t=pd.read_pickle('apps/calin_tokyo_t.pickle')
+        df_d=pd.read_pickle('apps/calin_tokyo_d.pickle')
     elif tab == '京都':
         df_learn_t= pd.read_pickle('apps/merged_kyoto_turf.pickle')
         df_learn_d=pd.read_pickle('apps/merged_kyoto_durt.pickle')
-        df=pd.read_pickle('apps/calin_kyoto.pickle')
+        df_t=pd.read_pickle('apps/calin_kyoto_t.pickle')
+        df_d=pd.read_pickle('apps/calin_kyoto_d.pickle')
     #レースIDの取得
-    race_id_unique=df.index.unique()
+    race_id_unique=df_t.index.unique()
     race_id = st.selectbox(
         '予想するレースを選択してください:',
     #options=df.columns.drop('rank') # 'rank'を除外したすべての特徴量
         options=race_id_unique
     )
-    idx=df.index==race_id
-    df_use=df[idx].copy()
+    idx=df_t.index==race_id
+    df_temp=df_t[idx]
+    if 'race_type_芝' in df_t.columns:
+        if df_temp['race_type_芝'].mean()==1:
+            df_use=df_t[idx]
+        else:
+            df_use=df_d[idx]
+    if 'race_type_ダート' in df_t.columns:
+        if df_temp['race_type_ダート'].mean()==1:
+            df_use=df_d[idx]
+        else:
+            df_use=df_t[idx]
+#    idx=df_t.index==race_id
+#    df_use=df[idx].copy()
     st.subheader("データ可視化（2軸で傾向見れるよーん）")
     default_feature1 = selection.index('平均位置取り') if '平均位置取り' in selection else 0
     default_feature2 = selection.index('平均Last3F') if '平均Last3F' in selection else 0
@@ -130,14 +144,15 @@ elif page=='データ可視化':
     
     converted_features1=conversion_dict.get(feature1, feature1)
     converted_features2=conversion_dict.get(feature2, feature2)
+    df_graph=df_use.dropna(subset=[converted_features1, converted_features2])
     # 散布図の作成
     sns.set_style("whitegrid")
     plt.figure(figsize=(10, 6))
-    sns.scatterplot(data=df_use, x=converted_features1, y=converted_features2)
+    sns.scatterplot(data=df_graph, x=converted_features1, y=converted_features2)
     plt.title(f"scatter: {converted_features1} vs {converted_features2}")
     # 馬名の追加
-    for i in range(df_use.shape[0]):
-        plt.text(x=df_use[converted_features1].iloc[i], y=df_use[converted_features2].iloc[i], s=df_use['馬 番'].iloc[i],
+    for i in range(df_graph.shape[0]):
+        plt.text(x=df_graph[converted_features1].iloc[i], y=df_graph[converted_features2].iloc[i], s=df_graph['馬 番'].iloc[i],
             fontdict=dict(color='red', size=12),
             bbox=dict(facecolor='yellow', alpha=1))
 
@@ -161,13 +176,13 @@ elif page=='データ可視化':
         df_learn = df_learn_d # または別の適当なデフォルト値
         
 #    idx=df_learn['course_len']==course_length
- #   st.dataframe(df_use)
+    st.dataframe(df_use)
     #学習用のXを設定
     X=df_learn
     X = X[ml_features]
     #学習用のYを設定
     y=df_learn
-#    st.dataframe(df_learn)
+    st.dataframe(df_learn)
     y=y['rank']
     #LGBMでの学習の実施
     lgb_clf = lgb.LGBMClassifier(**params)
