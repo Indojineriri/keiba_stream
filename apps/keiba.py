@@ -231,7 +231,7 @@ elif page=='ジャパンC':
     feature2 = st.selectbox('第2の特徴量を選択してください:', selection,index=default_feature2)
     converted_features1=conversion_dict.get(feature1, feature1)
     converted_features2=conversion_dict.get(feature2, feature2)
-    st.dataframe(df_use)
+#    st.dataframe(df_use)
     # 散布図の作成
 #    sns.set_style("whitegrid")
 #    plt.figure(figsize=(10, 6))
