@@ -223,7 +223,7 @@ elif page=='京阪杯':
 elif page=='ジャパンC':
     df_learn=pd.read_pickle('apps/merged_japan.pickle')
     df_use=pd.read_pickle('apps/calin_japan.pickle')
-    
+    print(df_use)
     st.subheader("データ可視化（2軸で傾向見れるよーん）")
     default_feature1 = selection.index('平均位置取り') if '平均位置取り' in selection else 0
     default_feature2 = selection.index('平均Last3F') if '平均Last3F' in selection else 0
@@ -231,6 +231,7 @@ elif page=='ジャパンC':
     feature2 = st.selectbox('第2の特徴量を選択してください:', selection,index=default_feature2)
     converted_features1=conversion_dict.get(feature1, feature1)
     converted_features2=conversion_dict.get(feature2, feature2)
+    st.dataframe(df_use)
     # 散布図の作成
     sns.set_style("whitegrid")
     plt.figure(figsize=(10, 6))
