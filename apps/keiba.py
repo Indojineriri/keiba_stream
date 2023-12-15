@@ -42,14 +42,14 @@ page=st.sidebar.radio('ページを選択してください',['データ分析',
 if page=='データ分析':
     # タブのように機能するラジオボタンを作成
     st.title('競馬データ分析')
-    tab = st.radio("競馬場を選択してください:", ('東京', '京都'))
+    tab = st.radio("競馬場を選択してください:", ('中京', '中山'))
 
     # 選択された競馬場に応じてデータをロード
-    if tab == '東京':
-        df = pd.read_pickle('apps/merged_tokyo_turf.pickle')
+    if tab == '中山':
+        df = pd.read_pickle('apps/merged_nakayama_turf.pickle')
         
-    elif tab == '京都':
-        df = pd.read_pickle('apps/merged_kyoto_turf.pickle')
+    elif tab == '中京':
+        df = pd.read_pickle('apps/merged_chukyou_turf.pickle')
         
     def calc_binned_avg(feature, target, bins):
         df_binned = df.copy()
@@ -104,17 +104,17 @@ if page=='データ分析':
     
 elif page=='データ可視化':
     st.title('東京京都11/24 7-12レース')
-    tab = st.radio("競馬場を選択してください:", ('東京', '京都'))
-    if tab == '東京':
-        df_learn_t  = pd.read_pickle('apps/merged_tokyo_turf.pickle')
-        df_learn_d=pd.read_pickle('apps/merged_tokyo_durt.pickle')
-        df_t=pd.read_pickle('apps/calin_tokyo_t.pickle')
-        df_d=pd.read_pickle('apps/calin_tokyo_d.pickle')
-    elif tab == '京都':
-        df_learn_t= pd.read_pickle('apps/merged_kyoto_turf.pickle')
-        df_learn_d=pd.read_pickle('apps/merged_kyoto_durt.pickle')
-        df_t=pd.read_pickle('apps/calin_kyoto_t.pickle')
-        df_d=pd.read_pickle('apps/calin_kyoto_d.pickle')
+    tab = st.radio("競馬場を選択してください:", ('中山', '中京'))
+    if tab == '中山':
+        df_learn_t  = pd.read_pickle('apps/merged_nakayama_turf.pickle')
+#        df_learn_d=pd.read_pickle('apps/merged_tokyo_durt.pickle')
+        df_t=pd.read_pickle('apps/caliin_nakayama.pickle')
+#        df_d=pd.read_pickle('apps/calin_tokyo_d.pickle')
+    elif tab == '中京':
+        df_learn_t= pd.read_pickle('apps/merged_chukyou_turf.pickle')
+#        df_learn_d=pd.read_pickle('apps/merged_kyoto_durt.pickle')
+        df_t=pd.read_pickle('apps/caliin_chukyou.pickle')
+#        df_d=pd.read_pickle('apps/calin_kyoto_d.pickle')
     #レースIDの取得
     race_id_unique=df_t.index.unique()
     race_id = st.selectbox(
@@ -124,18 +124,20 @@ elif page=='データ可視化':
     )
     idx=df_t.index==race_id
     df_temp=df_t[idx]
-    if 'race_type_芝' in df_t.columns:
-        if df_temp['race_type_芝'].mean()==1:
-            df_use=df_t[idx]
-        else:
-            df_use=df_d[idx]
-    if 'race_type_ダート' in df_t.columns:
-        if df_temp['race_type_ダート'].mean()==1:
-            df_use=df_d[idx]
-        else:
-            df_use=df_t[idx]
-#    idx=df_t.index==race_id
-#    df_use=df[idx].copy()
+    df_use=df_t[idx]
+#    if 'race_type_芝' in df_t.columns:
+#        if df_temp['race_type_芝'].mean()==1:
+#            df_use=df_t[idx]
+#        else:
+#            df_use=df_d[idx]
+#    if 'race_type_ダート' in df_t.columns:
+#        if df_temp['race_type_ダート'].mean()==1:
+#            df_use=df_d[idx]
+#        else:
+#           df_use=df_t[idx]
+    idx=df_t.index==race_id
+ #   df_use=df[idx].copy()
+    print()
     st.subheader("データ可視化（2軸で傾向見れるよーん）")
     default_feature1 = selection.index('平均位置取り') if '平均位置取り' in selection else 0
     default_feature2 = selection.index('平均Last3F') if '平均Last3F' in selection else 0
@@ -165,14 +167,14 @@ elif page=='データ可視化':
     ml_features = [conversion_dict.get(feature, feature) for feature in selected_features]
     #コース長さの設定
     course_length=df_use['course_len'].mean()
-
+    df_learn=df_learn_t
     #芝かダートの選択
-    if 'race_type_芝' in df_use.columns:
-        df_learn = df_learn_t
-    else:
+#    if 'race_type_芝' in df_use.columns:
+#        df_learn = df_learn_t
+#    else:
     # 'race_type_芝' が存在しない場合の処理（必要に応じて）
     # 例: df_learn を別のデフォルト値に設定
-        df_learn = df_learn_d # または別の適当なデフォルト値
+#        df_learn = df_learn_d # または別の適当なデフォルト値
         
 #    idx=df_learn['course_len']==course_length
 #    st.dataframe(df_use)
