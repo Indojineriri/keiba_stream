@@ -103,8 +103,8 @@ if page=='データ分析':
     st.plotly_chart(fig_BS)
     
 elif page=='データ可視化':
-    st.title('東京京都11/24 7-12レース')
-    tab = st.radio("競馬場を選択してください:", ('中山', '中京'))
+    st.title('中京中山11/24 7-12レース')
+    tab = st.radio("競馬場を選択してください:", ('中京', '中山'))
     if tab == '中山':
         df_learn_t  = pd.read_pickle('apps/merged_nakayama_turf.pickle')
 #        df_learn_d=pd.read_pickle('apps/merged_tokyo_durt.pickle')
