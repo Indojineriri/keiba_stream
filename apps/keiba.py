@@ -37,12 +37,12 @@ params = {'objective': 'binary',
 'min_child_samples': 20,
 'num_iterations': 1000,}
 
-page=st.sidebar.radio('ページを選択してください',['データ分析','データ可視化','京阪杯','ジャパンC'])
+page=st.sidebar.radio('ページを選択してください',['データ分析','データ可視化','阪神杯','有馬記念'])
 
 if page=='データ分析':
     # タブのように機能するラジオボタンを作成
     st.title('競馬データ分析')
-    tab = st.radio("競馬場を選択してください:", ('中京', '中山'))
+    tab = st.radio("競馬場を選択してください:", ('中山','中京'))
 
     # 選択された競馬場に応じてデータをロード
     if tab == '中山':
@@ -104,7 +104,7 @@ if page=='データ分析':
     
 elif page=='データ可視化':
     st.title('中京中山11/24 7-12レース')
-    tab = st.radio("競馬場を選択してください:", ('中京', '中山'))
+    tab = st.radio("競馬場を選択してください:", ('中山','中京'))
     if tab == '中山':
         df_learn_t  = pd.read_pickle('apps/merged_nakayama_turf.pickle')
 #        df_learn_d=pd.read_pickle('apps/merged_tokyo_durt.pickle')
@@ -194,9 +194,9 @@ elif page=='データ可視化':
     pred['複勝確率%']=probabilities*100
     st.dataframe(pred)
     
-elif page=='京阪杯':
-    df_learn=pd.read_pickle('apps/merged_keihan.pickle')
-    df_use=pd.read_pickle('apps/calin_keihan.pickle')
+elif page=='阪神杯':
+    df_learn=pd.read_pickle('apps/merged_hanshin.pickle')
+    df_use=pd.read_pickle('apps/calin_hanshin.pickle')
     
     st.subheader("データ可視化（2軸で傾向見れるよーん）")
     default_feature1 = selection.index('平均位置取り') if '平均位置取り' in selection else 0
@@ -238,9 +238,9 @@ elif page=='京阪杯':
     pred['複勝確率%']=probabilities*100
     st.dataframe(pred)
     
-elif page=='ジャパンC':
-    df_learn=pd.read_pickle('apps/merged_japan.pickle')
-    df_use=pd.read_pickle('apps/calin_japan.pickle')
+elif page=='有馬記念':
+    df_learn=pd.read_pickle('apps/merged_arima.pickle')
+    df_use=pd.read_pickle('apps/calin_arima.pickle')
     print(df_use)
     st.subheader("データ可視化（2軸で傾向見れるよーん）")
     default_feature1 = selection.index('平均位置取り') if '平均位置取り' in selection else 0
@@ -251,17 +251,17 @@ elif page=='ジャパンC':
     converted_features2=conversion_dict.get(feature2, feature2)
 #    st.dataframe(df_use)
     # 散布図の作成
-#    sns.set_style("whitegrid")
-#    plt.figure(figsize=(10, 6))
-#    sns.scatterplot(data=df_use, x=converted_features1, y=converted_features2)
-#    plt.title(f"scatter: {converted_features1} vs {converted_features2}")
-#    # 馬名の追加
-#    for i in range(df_use.shape[0]):
-#        plt.text(x=df_use[converted_features1].iloc[i], y=df_use[converted_features2].iloc[i], s=df_use['馬 番'].iloc[i],
-#            fontdict=dict(color='red', size=12),
-#            bbox=dict(facecolor='yellow', alpha=1))
-#
-#    st.pyplot(plt)
+    sns.set_style("whitegrid")
+    plt.figure(figsize=(10, 6))
+    sns.scatterplot(data=df_use, x=converted_features1, y=converted_features2)
+    plt.title(f"scatter: {converted_features1} vs {converted_features2}")
+    # 馬名の追加
+    for i in range(df_use.shape[0]):
+        plt.text(x=df_use[converted_features1].iloc[i], y=df_use[converted_features2].iloc[i], s=df_use['馬 番'].iloc[i],
+            fontdict=dict(color='red', size=12),
+            bbox=dict(facecolor='yellow', alpha=1))
+
+    st.pyplot(plt)
     
     #学習の開始
     st.subheader("機械学習予想（LightGBMでやってるよーん）")
